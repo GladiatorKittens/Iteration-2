@@ -22,10 +22,13 @@ class LevelClass extends Phaser.Scene {
         this.create_tilemap();
         this.load_path_values();
         //load in altar
+        console.log(this);
         this.altar = new Altar(this, this.altar_x, this.altar_y, altar_health);
-        this.altar.setScale(2, 2);
-        this.altar.setStatic(true);
-        this.altar.body.isStatic = true;
+        //this.altar = this.physics.add.sprite(); //doesn't do anything
+        console.log(this.altar)
+        //this.altar.setScale(2, 2);
+        //this.altar.setStatic(true);
+        //this.altar.body.isStatic = true;
     }
     create_tilemap() {
         this.map = this.make.tilemap({ key: this.id });
@@ -47,6 +50,6 @@ class LevelClass extends Phaser.Scene {
         }, this)
     }
     update() {
-
+        this.altar.update();
     }
 }
