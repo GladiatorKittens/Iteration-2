@@ -40,3 +40,19 @@ function purchase_cost_calc(x) {
     y = Math.round(Math.sqrt(x) * 9);
     return y;
 }
+function create_anims() {
+    const anims = this.anims;
+    anims.create({
+        key: "idle",
+        frames: anims.generateFrameNumbers("tentacle", { start: 0, end: 2 }),
+        frameRate: 2,
+        yoyo: true,
+        repeat: -1
+    });
+    anims.create({
+        key: "tentacle_attack",
+        frames: anims.generateFrameNumbers("tentacle", { start: 2, end: 6 }),
+        frameRate: 8,
+        yoyo: true
+    });
+}
