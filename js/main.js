@@ -37,7 +37,8 @@ function upgrade_cost_calc(x) {
 function purchase_cost_calc(x) {
     //x is the troop number, y is the cost of the  troop
     //function is y = 9 x ^ (1/2)
-    y = Math.round(Math.sqrt(x) * 9);
+    var y = Math.round(Math.sqrt(x) * 9);
+    console.log(y)
     return y;
 }
 function create_anims() {

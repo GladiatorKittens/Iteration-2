@@ -4,7 +4,7 @@ class LevelClass extends Phaser.Scene {
         this.id = id;
         this.max_enemies = max_enemies;
         this.x_array = this.y_array = [];
-        this.blood = blood;
+        this.blood = 400000;
     }
     preload() {
         this.load.spritesheet("Altar", "assets/art/Altar/altar_spritesheet.png", { frameWidth: 23, frameHeight: 23, margin: 1 });
@@ -35,10 +35,9 @@ class LevelClass extends Phaser.Scene {
         //creates the button the player can use to summon a tentacle
         this.tentacle_button = new Button(132, 500, "blank_button", this.summon_tentacle, this)
         this.tentacle_button.image.setScale(2, 2);
+        
 
-        this.tentacles = this.physics.add.group({
-            key: "tentacle" //want these to be instances of the tentacle class, but cant get it to work
-        })
+        this.tentacles = this.physics.add.group();
         console.log(this.tentacles)
         
     }
@@ -64,14 +63,17 @@ class LevelClass extends Phaser.Scene {
     update() {
         this.altar.update();
         this.pause_button.update();
+        
     }
     summon_tentacle(object, scene) {
-        var summon_cost = purchase_cost_calc(this.tentacles.length + 1);
+        var summon_cost = purchase_cost_calc(this.tentacles.children.size + 1);
         if (summon_cost < this.blood) {
             this.blood -= summon_cost;
             var tentacle = new TentacleClass(3, object.x, object.y, this);
             tentacle.setScale(2, 2);
             //I need to create the hit area of the tentacle
+            this.tentacles.add(tentacle);
+            console.log(this.tentacles)
         }
     }
 }
