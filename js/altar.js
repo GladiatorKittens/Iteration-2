@@ -24,9 +24,8 @@ class Altar extends Phaser.Physics.Arcade.Sprite {
         if (this.health <= 0) {
             this.health = 0;
             this.scene.health_text.setText("health: " + this.health);
-            this.setTexture(4);
+            this.setTexture(3);
             this.scene.input.enabled = false;
-            this.scene.matter.pause();
             this.scene.scene.pause();
         }
     }

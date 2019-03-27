@@ -20,7 +20,6 @@ class SpriteButton extends Phaser.Physics.Arcade.Sprite {
         this.pressed = false;
         this.setInteractive();
         this.on("pointerdown", this.on_click_function, this.scene);
-        console.log(this);
     }
     update() {
         if (this.pressed === true) {
