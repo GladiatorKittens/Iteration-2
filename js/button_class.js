@@ -55,6 +55,7 @@ class PausePlayButton extends Phaser.Physics.Arcade.Sprite {
             case pause_play_states.STOPPED:
                 this.pause_button.play_state = pause_play_states.PLAYING;
                 this.pause_button.scene.game_started = true;
+                //TODO - update for waves
                 break;
         };      
     }

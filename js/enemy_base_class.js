@@ -7,7 +7,7 @@ class EnemyBaseClass extends Phaser.Physics.Arcade.Sprite {
     }
     update() {
         super.update();
-        if (this.isActive === false) {
+        if (this.active === false) {
             this.x = 0;
             this.y = 0;
         } else if (this.pi < this.scene.path.length) {
@@ -18,8 +18,11 @@ class EnemyBaseClass extends Phaser.Physics.Arcade.Sprite {
 
     }
     attack() {
-        if (this.isActive === true) {
+        if (this.active === true) {
             this.scene.altar.take_damage(this.damage);
+        } else {
+            this.x = 0;
+            this.y = 0;
         }
     }
     take_damage(monster_damage) {

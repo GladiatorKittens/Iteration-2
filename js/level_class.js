@@ -1,13 +1,15 @@
 class LevelClass extends Phaser.Scene {
-    constructor(id, blood, max_enemies) {
+    constructor(id, blood) {
         super(id);
         this.id = id;
-        this.max_enemies = max_enemies;
         this.x_array = [];
         this.y_array = [];
-        this.blood = 400000;
+        this.blood = 4000;
         this.enemies_spawned = 0;
         this.path = [];
+        this.wave_properties = [];    
+        this.wave_no = 0;
+        this.wave_started = false;
     }
     preload() {
         this.load.spritesheet("Altar", "assets/art/Altar/altar_spritesheet.png", { frameWidth: 23, frameHeight: 23, spacing: 1 });
@@ -19,7 +21,6 @@ class LevelClass extends Phaser.Scene {
         this.load.image("tilesheet", "assets/level design/tilesheet.png");
         this.load.tilemapTiledJSON(this.id, ("assets/level design/" + this.id + ".json"));
 
-        this.load.image("blank_button", "assets/art/Buttons/confirm.png");
         this.load.image('troop_button', 'assets/art/Buttons/troop_button.png');
         this.load.image("troop_background", "assets/art/UI/troop_menu_background.png");
         this.load.image("blood_icon", "assets/art/UI/blood_icon.png");
@@ -39,7 +40,7 @@ class LevelClass extends Phaser.Scene {
         //text placements
         this.blood_text = this.add.text(820, 490, ": ", { fontSize: "32px", fill: "#fff" });
         this.blood_icon = this.add.image(800, 510, "blood_icon");
-
+        //text icons to indicate what they represent
         this.health_text = this.add.text(670, 490, ": ", { fontSize: "32px", fill: "#fff" });
         this.health_icon = this.add.image(650, 510, "health_icon");
         //create the pause button
@@ -50,24 +51,31 @@ class LevelClass extends Phaser.Scene {
         this.tentacle_button = new SpriteButton(132, 500, "summon_button", this.summon_tentacle, this);
         this.tentacle_button.setScale(2, 2);
         this.add.existing(this.tentacle_button);
-
+        //creates a temporary tentacle that the player uses to place their tentacles
         this.temp_tentacle = new TentacleClass(3000, 0, 0, this);
         this.temp_tentacle.setInteractive();
         this.temp_tentacle.setActive(false);
         this.add.existing(this.temp_tentacle);
         this.temp_tentacle.setScale(2, 2);
         this.temp_tentacle.setVisible(false);
-        this.input.setDraggable(this.temp_tentacle);
-
+        this.input.setDraggable(this.temp_tentacle);    //allows the tentacle to be dragged about
+        
         this.input.on("drag", function (pointer, object, drag_x, drag_y) {
             object.x = snap_to_grid(drag_x);
             object.y = snap_to_grid(drag_y);
         })
-
+        //creates all the needed physics groups and sets up any needed overlap functions
         this.tentacles = this.physics.add.group();      
         this.enemies = this.physics.add.group();
         this.hit_radii = this.physics.add.group();
         this.physics.add.overlap(this.hit_radii, this.enemies, this.damage_enemy);
+
+        //wave system set-up
+        this.no_of_waves = this.wave_properties.length;
+        this.wave_text = this.add.text(400, 30, "Wave ", { fontSize: "64px", fill: "#8b0000" });
+        this.wave_text.setText("Wave " + (this.wave_no + 1));
+        this.current_wave = this.wave_properties[this.wave_no];
+
     }
     create_tilemap() {
         this.map = this.make.tilemap({ key: this.id });
@@ -104,39 +112,70 @@ class LevelClass extends Phaser.Scene {
         this.tentacles.children.iterate(function (child) {
             child.update();
         });
-        this.enemies.children.iterate(function (child) {
-            child.update();
-            if (child.pi >= this.path.length) {
-                child.attack(this.altar);
-                child.setActive(false);
-                child.setVisible(false);
+
+        if (this.enemies.getFirstAlive() === null && this.enemies.getLength() != 0 && this.current_wave.total_enemies <= this.enemies.getLength()) {
+            //wave is completed
+            this.enemies.clear(true, true);
+            this.tentacles.children.iterate(function (child) {
+                child.anims.stop();
+                child.anims.play("idle", true);
+            })
+            this.pause_button.play_state = pause_play_states.STOPPED;
+            if (this.wave_no == this.no_of_waves) {
+                //level complete!
+                this.wave_text.setText("You Win!")     
+            } else {
+                this.wave_no++;
+                this.current_wave = this.wave_properties[this.wave_no];
+                this.wave_text.setText("Wave " + (this.wave_no + 1))
             }
-        }, this);
-        //this.hit_radii.children.iteratre(function (child) {
-        //    child.update();
-        //})
+            this.wave_text.setVisible(true);
+
+        } else if (this.game_started === true) {
+            if (this.wave_no == 0) {
+                this.spawn_enemy = this.time.addEvent({
+                    delay: this.current_wave.spawn_speed,
+                    callback: this.spawn_enemies,
+                    callbackScope: this,
+                    repeat: this.current_wave.total_enemies
+                });
+            } else {
+                this.spawn_enemy.reset({
+                    delay: this.current_wave.spawn_speed,
+                    callback: this.spawn_enemies,
+                    callbackScope: this,
+                    repeat: this.current_wave.total_enemies
+                });
+            }
+
+            this.wave_text.setVisible(false);
+            this.game_started = false; //prevents this if statement from running more than once per wave
+        } else {
+            this.enemies.children.iterate(function (child) {
+                child.update();
+                if (child.pi >= this.path.length) {
+                    child.attack(this.altar);
+                    child.setActive(false);
+                    child.setVisible(false);
+                }
+            }, this);
+        }
+
         this.temp_tentacle.update();
         this.blood_text.setText(":" + this.blood);
         this.health_text.setText(":" + this.altar.health);
         this.tentacle_button.update();
-        if (this.game_started === true) {
-            this.spawn_enemy = this.time.addEvent({
-                delay: 3000,
-                callback: this.spawn_enemy,
-                callbackScope: this,
-                repeat: this.max_enemies
-            });
-            this.game_started = false; //prevents this if statement from running more than once
-        }
+
     }
 
     damage_enemy(hit_radius, enemy) {
-        hit_radius.tentacle.attack(enemy);
+        if (enemy.active === true) {
+            hit_radius.tentacle.attack(enemy);
+        }        
     }
-
-    spawn_enemy() {
-        if (this.enemies_spawned <= this.max_enemies) {
-            var new_enemy = new EnemyBaseClass(this.path[0].x, this.path[1].y, 10, 15, this, "farmer");
+    spawn_enemies() {
+        if (this.enemies_spawned <= this.current_wave.total_enemies) {
+            var new_enemy = new EnemyBaseClass(this.path[0].x, this.path[1].y, 1 * this.current_wave.health_modifier, 15 * this.current_wave.damage_modifier, this, "farmer");
             this.add.existing(new_enemy);
             this.enemies.add(new_enemy);
         }
