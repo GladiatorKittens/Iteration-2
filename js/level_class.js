@@ -51,7 +51,7 @@ class LevelClass extends Phaser.Scene {
         this.tentacle_button.setScale(2, 2);
         this.add.existing(this.tentacle_button);
 
-        this.temp_tentacle = new TentacleClass(0, 0, 0, this);
+        this.temp_tentacle = new TentacleClass(3000, 0, 0, this);
         this.temp_tentacle.setInteractive();
         this.temp_tentacle.setActive(false);
         this.add.existing(this.temp_tentacle);
@@ -159,7 +159,7 @@ class LevelClass extends Phaser.Scene {
             hit_box.setCircle(32 * 2);
             
             //summon in an set up the new tentacle
-            var tentacle = new TentacleClass(3, this.temp_tentacle.x, this.temp_tentacle.y, this);
+            var tentacle = new TentacleClass(3000, this.temp_tentacle.x, this.temp_tentacle.y, this);
             tentacle.setScale(2, 2);
             tentacle.width = 64;
             tentacle.height = 64;

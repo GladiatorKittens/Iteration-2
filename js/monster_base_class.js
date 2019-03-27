@@ -13,6 +13,7 @@ class MonsterBaseClass extends Phaser.Physics.Arcade.Sprite {
         time = time.getTime();
         //check if the attack is on cooldown
         var time_diff = time - this.last_attack_time;
+        console.log(this.cooldown_length)
         if (time_diff > this.cooldown_length) {
             this.last_attack_time = time;
             return true;
@@ -34,14 +35,17 @@ class TentacleClass extends MonsterBaseClass {
         super.update();
         if (this.is_attacking == false) {
             this.anims.play("idle", true);
+            //console.log("idle");
         }//TODO - return to idle
     }
     attack(enemy) {
         var attack_possible = this.attack_cooldown_calc();
+        console.log(attack_possible);
         if (attack_possible) {
             this.is_attacking = true;
             enemy.take_damage(this.attack_damage);
-            this.anims.play("tentacle_attack", false);
+            this.anims.play("tentacle_attack", true);
+            //console.log("splat");
             this.reset = this.scene.time.addEvent({
                 delay: 1000,
                 callback: this.reset_timer,
