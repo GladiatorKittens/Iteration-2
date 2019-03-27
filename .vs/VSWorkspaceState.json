@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\js"
   ],
-  "SelectedNode": "\\.gitattributes",
+  "SelectedNode": "\\js\\Levels.js",
   "PreviewInSolutionExplorer": false
 }

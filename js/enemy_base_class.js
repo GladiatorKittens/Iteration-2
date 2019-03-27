@@ -1,9 +1,10 @@
 class EnemyBaseClass extends Phaser.Physics.Arcade.Sprite {
-    constructor(x, y, health, damage, scene, texture) {
+    constructor(x, y, health, damage, scene, texture, value) {
         super(scene, x, y, texture, 0);
         this.health = health;
         this.damage = damage;
         this.pi = 0;
+        this.value = value;
     }
     update() {
         super.update();
@@ -30,6 +31,7 @@ class EnemyBaseClass extends Phaser.Physics.Arcade.Sprite {
         if (this.health <= 0) {
             this.setActive(false);
             this.setVisible(false);
+            this.scene.blood += this.value;
         }
     }
     die() {

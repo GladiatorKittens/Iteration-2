@@ -120,9 +120,10 @@ class LevelClass extends Phaser.Scene {
                 child.anims.stop();
                 child.anims.play("idle", true);
             })
+            this.enemies_spawned = 0;
             this.pause_button.play_state = pause_play_states.STOPPED;
-            if (this.wave_no == this.no_of_waves) {
-                //level complete!
+            if (this.wave_no === this.no_of_waves) {
+                //level complete! TODO - fix and add end screen
                 this.wave_text.setText("You Win!")     
             } else {
                 this.wave_no++;
@@ -132,22 +133,12 @@ class LevelClass extends Phaser.Scene {
             this.wave_text.setVisible(true);
 
         } else if (this.game_started === true) {
-            if (this.wave_no == 0) {
-                this.spawn_enemy = this.time.addEvent({
-                    delay: this.current_wave.spawn_speed,
-                    callback: this.spawn_enemies,
-                    callbackScope: this,
-                    repeat: this.current_wave.total_enemies
-                });
-            } else {
-                this.spawn_enemy.reset({
-                    delay: this.current_wave.spawn_speed,
-                    callback: this.spawn_enemies,
-                    callbackScope: this,
-                    repeat: this.current_wave.total_enemies
-                });
-            }
-
+            this.spawn_enemy = this.time.addEvent({
+                delay: this.current_wave.spawn_speed,
+                callback: this.spawn_enemies,
+                callbackScope: this,
+                repeat: this.current_wave.total_enemies
+            });
             this.wave_text.setVisible(false);
             this.game_started = false; //prevents this if statement from running more than once per wave
         } else {
@@ -175,9 +166,10 @@ class LevelClass extends Phaser.Scene {
     }
     spawn_enemies() {
         if (this.enemies_spawned <= this.current_wave.total_enemies) {
-            var new_enemy = new EnemyBaseClass(this.path[0].x, this.path[1].y, 1 * this.current_wave.health_modifier, 15 * this.current_wave.damage_modifier, this, "farmer");
+            var new_enemy = new EnemyBaseClass(this.path[0].x, this.path[1].y, 1 * this.current_wave.health_modifier, 15 * this.current_wave.damage_modifier, this, "farmer", 2);
             this.add.existing(new_enemy);
             this.enemies.add(new_enemy);
+            this.enemies_spawned++;
         }
     }
     summon_tentacle(object, scene) {
