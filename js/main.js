@@ -11,8 +11,7 @@ var config = {
                 x: 0,
                 y: 0
             },
-            debug: true,
-            debugBodyColor: 0xffffff
+            debug: true
         }
     },
         //scale: {
@@ -38,9 +37,17 @@ function purchase_cost_calc(x) {
     //x is the troop number, y is the cost of the  troop
     //function is y = 9 x ^ (1/2)
     var y = Math.round(Math.sqrt(x) * 9);
-    console.log(y)
     return y;
 }
+function snap_to_grid(x) {
+    if (x % 32 >= 16) {
+        x = (Math.ceil(x / 32)) * 32;
+    } else if (x % 32 > 0) {
+        x = Math.floor(x / 32) * 32;
+    }
+    return x;
+}
+
 function create_anims() {
     const anims = this.anims;
     anims.create({

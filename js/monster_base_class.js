@@ -33,7 +33,7 @@ class TentacleClass extends MonsterBaseClass {
     update() {
         super.update();
         if (this.is_attacking == false) {
-            this.sprite.anims.play("idle", true);
+            this.anims.play("idle", true);
         }//TODO - return to idle
     }
     attack(enemy) {

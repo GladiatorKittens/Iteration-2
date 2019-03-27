@@ -12,6 +12,25 @@ class Button {
     }
 }
 
+class SpriteButton extends Phaser.Physics.Arcade.Sprite {
+    constructor(x, y, sprite_path, on_click_function, scene) {
+        super(scene, x, y, sprite_path, 0);
+        this.sprite_path = sprite_path;
+        this.on_click_function = on_click_function;
+        this.pressed = false;
+        this.setInteractive();
+        this.on("pointerdown", this.on_click_function, this.scene);
+        console.log(this);
+    }
+    update() {
+        if (this.pressed === true) {
+            this.setTexture(this.sprite_path, 1);
+        } else {
+            this.setTexture(this.sprite_path, 0);
+        }
+    }
+}
+
 const pause_play_states = {
     PLAYING: "0",
     PAUSED: "1",
