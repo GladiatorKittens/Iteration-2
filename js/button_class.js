@@ -35,7 +35,20 @@ const pause_play_states = {
     PAUSED: "1",
     STOPPED: "2"
 }
-
+class UpgradeButton extends Phaser.Physics.Arcade.Sprite {
+    constructor(x, y, sprite_path, scene) {
+        super(x, y, sprite_path, 0);
+        this.setInteractive();
+        this.on("pointerdown", this.upgrade, this.scene);
+    }
+    upgrade() {
+        //increase level of tentacles
+        //upgrade all the stats of all the tentacles
+    }
+    update() {
+        //display blood cost of upgrading
+    }
+}
 class PausePlayButton extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, "pause_play_button", 0);

@@ -30,6 +30,17 @@ class LevelClass extends Phaser.Scene {
         this.load.audio("tentacle_attackSFX", "assets/sound/Tentacle_Attack.wav")
     }
     create(altar_health) {
+        //SHADERS EXAMPLE
+        this.shader = "Greyscale";
+        this.pipeTick = 0.0;
+
+        this.pipeline = this.game.renderer.addPipeline(this.shader, new NewShader(this.game));
+        //this.pipeline.setFloat2('uResolution', game.config.width, game.config.height);
+
+        this.input.on('pointerdown', function () {
+            //this.altar.setPipeline(this.shader);
+            this.cameras.main.setRenderToTexture(this.shader);
+        }, this);
         //load in anims and sound if level 1
         if (this.id == "Level_1") { create_anims.call(this); load_music.call(this); }
         //load in map values
