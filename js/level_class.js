@@ -15,20 +15,23 @@ class LevelClass extends Phaser.Scene {
         this.load.spritesheet("Altar", "assets/art/Altar/altar_spritesheet.png", { frameWidth: 23, frameHeight: 23, spacing: 1 });
         this.load.spritesheet("pause_play_button", "assets/art/Buttons/pause_play.png", { frameWidth: 32, frameHeight: 32, spacing: 1 });
         this.load.spritesheet("tentacle", "assets/art/Tentacle/tentacle_spritesheet.png", { frameWidth: 32, frameHeight: 32, spacing: 1 });
-        this.load.spritesheet("summon_button", "assets/art/Buttons/confirm_sheet.png", { frameWidth: 32, frameHeight: 32, spacing: 1 });
+        this.load.spritesheet("summon_button", "assets/art/Buttons/summoning_button.png", { frameWidth: 32, frameHeight: 32, spacing: 1 });
         this.load.spritesheet("farmer", "assets/art/Enemies/farmer.png", { frameWidth: 32, frameHeight: 32, spacing: 1 });
 
         this.load.image("tilesheet", "assets/level design/tilesheet.png");
         this.load.tilemapTiledJSON(this.id, ("assets/level design/" + this.id + ".json"));
 
+        this.load.image("hit_circle", "assets/art/Tentacle/hit_circle.png");
         this.load.image('troop_button', 'assets/art/Buttons/troop_button.png');
         this.load.image("troop_background", "assets/art/UI/troop_menu_background.png");
         this.load.image("blood_icon", "assets/art/UI/blood_icon.png");
         this.load.image("health_icon", "assets/art/UI/health_icon.png");
+
+        this.load.audio("tentacle_attackSFX", "assets/sound/Tentacle_Attack.wav")
     }
     create(altar_health) {
-        //load in anims if level 1
-        if (this.id == "Level_1") { create_anims.call(this); }
+        //load in anims and sound if level 1
+        if (this.id == "Level_1") { create_anims.call(this); load_music.call(this); }
         //load in map values
         this.create_tilemap();
         this.load_path_values();
@@ -38,10 +41,12 @@ class LevelClass extends Phaser.Scene {
         this.add.existing(this.altar);
         this.altar.setScale(2, 2);
         //text placements
+        this.tentacle_cost_icon = this.add.image(115, 440, "blood_icon");
+        this.tentacle_cost_text = this.add.text(130, 430, ": ", { fontSize: "24px", fill: "#fff" });
         this.blood_text = this.add.text(820, 490, ": ", { fontSize: "32px", fill: "#fff" });
-        this.blood_icon = this.add.image(800, 510, "blood_icon");
+        this.health_text = this.add.text(670, 490, ": ", { fontSize: "32px", fill: "#fff" });    
         //text icons to indicate what they represent
-        this.health_text = this.add.text(670, 490, ": ", { fontSize: "32px", fill: "#fff" });
+        this.blood_icon = this.add.image(800, 510, "blood_icon");
         this.health_icon = this.add.image(650, 510, "health_icon");
         //create the pause button
         this.pause_button = new PausePlayButton(this, 50, 500); //as the pause button uses a spritesheet, it cant use the button class
@@ -104,7 +109,6 @@ class LevelClass extends Phaser.Scene {
             var py = Phaser.Math.Interpolation.CatmullRom(this.y_array, i);
             this.path.push({ x: px, y: py });
         }
-        console.log(this.path)
     }
     update() {
         this.altar.update();
@@ -122,7 +126,7 @@ class LevelClass extends Phaser.Scene {
             })
             this.enemies_spawned = 0;
             this.pause_button.play_state = pause_play_states.STOPPED;
-            if (this.wave_no === this.no_of_waves) {
+            if (this.wave_no === this.no_of_waves - 1) {
                 //level complete! TODO - fix and add end screen
                 this.wave_text.setText("You Win!")     
             } else {
@@ -131,7 +135,6 @@ class LevelClass extends Phaser.Scene {
                 this.wave_text.setText("Wave " + (this.wave_no + 1))
             }
             this.wave_text.setVisible(true);
-
         } else if (this.game_started === true) {
             this.spawn_enemy = this.time.addEvent({
                 delay: this.current_wave.spawn_speed,
@@ -155,6 +158,7 @@ class LevelClass extends Phaser.Scene {
         this.temp_tentacle.update();
         this.blood_text.setText(":" + this.blood);
         this.health_text.setText(":" + this.altar.health);
+        this.tentacle_cost_text.setText(":" + purchase_cost_calc(this.tentacles.children.size + 1));
         this.tentacle_button.update();
 
     }
@@ -186,7 +190,7 @@ class LevelClass extends Phaser.Scene {
         } else if (this.tentacle_button.pressed === true) {
             this.blood -= summon_cost;
             //I need to create the hit area of the tentacle
-            var hit_box = this.physics.add.image(this.temp_tentacle.x - 47.5, this.temp_tentacle.y - 47.5, "hit_box");
+            var hit_box = this.physics.add.image(this.temp_tentacle.x, this.temp_tentacle.y, "hit_circle");
             hit_box.setCircle(32 * 2);
             
             //summon in an set up the new tentacle

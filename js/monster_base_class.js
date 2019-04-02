@@ -42,6 +42,7 @@ class TentacleClass extends MonsterBaseClass {
             this.is_attacking = true;
             enemy.take_damage(this.attack_damage);
             this.anims.play("tentacle_attack", true);
+            music.tentacle_attack.play();
             this.reset = this.scene.time.addEvent({
                 delay: 1000,
                 callback: this.reset_timer,

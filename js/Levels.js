@@ -19,3 +19,19 @@ class WaveProperties {
         this.damage_modifier = damage_modifier;
     }
 }
+class Pause extends Phaser.Scene {
+    constructor() {
+        super("Pause")
+    }
+    preload() {
+        //this.load.image("pause_image", "assets/level design/pause_image.png");
+    }
+    create() {
+        this.input.once('pointerdown', function () {
+            this.scene.resume('Level_1');
+        }, this);
+    }
+    update() {
+
+    }
+}

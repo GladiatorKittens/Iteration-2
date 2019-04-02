@@ -44,10 +44,11 @@ class PausePlayButton extends Phaser.Physics.Arcade.Sprite {
         this.play_state = pause_play_states.STOPPED;
     }
     on_click_function() {
-        //TODO - pause and resume game
         switch (this.pause_button.play_state) {
             case pause_play_states.PLAYING:
-                this.pause_button.play_state = pause_play_states.PAUSED;
+                //this.pause_button.play_state = pause_play_states.PAUSED;
+                this.scene.pause();
+                this.scene.launch("Pause")
                 break;
             case pause_play_states.PAUSED:
                 this.pause_button.play_state = pause_play_states.PLAYING;
@@ -55,9 +56,9 @@ class PausePlayButton extends Phaser.Physics.Arcade.Sprite {
             case pause_play_states.STOPPED:
                 this.pause_button.play_state = pause_play_states.PLAYING;
                 this.pause_button.scene.game_started = true;
-                //TODO - update for waves
                 break;
-        };      
+        };
+        this.pause_button.setFrame(0)
     }
     update() {
         if (this.play_state === pause_play_states.PAUSED) {

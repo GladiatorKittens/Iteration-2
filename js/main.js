@@ -10,18 +10,18 @@ var config = {
             gravity: {
                 x: 0,
                 y: 0
-            },
-            debug: true
+            }//,
+            //debug: true
         }
     },
         //scale: {
     //    mode: Phaser.Scale.ScaleModes.RESIZE,
     //},
-    scene: [StartScreen, Level_1] //add levels as necessary
+    scene: [StartScreen, Level_1, Pause] //add levels as necessary
 }
 
 var game = new Phaser.Game(config);
-
+var music = {};
 function upgrade_cost_calc(x) {
     //x is the level being upgraded to, y is cost
     //function is (x-10)(7/10y) = -1 * 8^2
@@ -63,4 +63,7 @@ function create_anims() {
         frameRate: 8,
         yoyo: true
     });
+}
+function load_music() {   
+    music.tentacle_attack = this.sound.add("tentacle_attackSFX");
 }
