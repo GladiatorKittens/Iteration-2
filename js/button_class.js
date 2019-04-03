@@ -30,6 +30,21 @@ class SpriteButton extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
+class UpgradeButton extends Phaser.Physics.Arcade.Sprite {
+    constructor(x, y, sprite_path, scene) {
+        super(scene, x, y, sprite_path, 0);
+        this.sprite_path = sprite_path;
+        this.setInteractive();
+        this.on("pointerdown", this.upgrade, this.scene);
+    }
+    upgrade() {
+        //what improves when the tentacles are upgraded?
+    }
+    update() {
+        this.scene.upgrade_text.
+    }
+}
+
 const pause_play_states = {
     PLAYING: "0",
     PAUSED: "1",
