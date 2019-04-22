@@ -30,18 +30,28 @@ class SpriteButton extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-class UpgradeButton extends Phaser.Physics.Arcade.Sprite {
-    constructor(x, y, sprite_path, scene) {
-        super(scene, x, y, sprite_path, 0);
-        this.sprite_path = sprite_path;
+class UpgradeButton extends Phaser.Physics.Arcade.Image {
+    constructor(x, y, image_path, scene) {
+        super(scene, x, y, image_path);
+        this.image_path = image_path;
         this.setInteractive();
-        this.on("pointerdown", this.upgrade, this.scene);
+        this.on("pointerdown", this.upgrade, this);       
+        this.upgrade_cost = upgrade_cost_calc(this.scene.tentacle_level);
     }
     upgrade() {
-        //what improves when the tentacles are upgraded?
+        if (this.scene.blood >= this.upgrade_cost) {
+            this.scene.blood -= this.upgrade_cost;
+            this.scene.tentacle_level += 1;
+            
+            this.scene.tentacles.children.iterate(function (child) {
+                child.attack_damage += 1;
+                child.cooldown_length = 3000 - (this.scene.tentacle_level * 100);
+            }, this)
+        }
     }
     update() {
-        this.scene.upgrade_text.
+        this.upgrade_cost = upgrade_cost_calc(this.scene.tentacle_level);
+        this.scene.upgrade_text.setText(":" + this.upgrade_cost);
     }
 }
 

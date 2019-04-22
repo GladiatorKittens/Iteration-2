@@ -4,12 +4,13 @@ class LevelClass extends Phaser.Scene {
         this.id = id;
         this.x_array = [];
         this.y_array = [];
-        this.blood = 4000;
+        this.blood = 40;
         this.enemies_spawned = 0;
         this.path = [];
         this.wave_properties = [];    
         this.wave_no = 0;
         this.wave_started = false;
+        this.tentacle_level = 0;
     }
     preload() {
         this.load.spritesheet("Altar", "assets/art/Altar/altar_spritesheet.png", { frameWidth: 23, frameHeight: 23, spacing: 1 });
@@ -26,6 +27,7 @@ class LevelClass extends Phaser.Scene {
         this.load.image("troop_background", "assets/art/UI/troop_menu_background.png");
         this.load.image("blood_icon", "assets/art/UI/blood_icon.png");
         this.load.image("health_icon", "assets/art/UI/health_icon.png");
+        this.load.image("upgrade_icon", "assets/art/Buttons/button_upgrade.png")
 
         this.load.audio("tentacle_attackSFX", "assets/sound/Tentacle_Attack.wav")
     }
@@ -46,8 +48,14 @@ class LevelClass extends Phaser.Scene {
         this.blood_text = this.add.text(820, 490, ": ", { fontSize: "32px", fill: "#fff" });
         this.health_text = this.add.text(670, 490, ": ", { fontSize: "32px", fill: "#fff" });    
         //text icons to indicate what they represent
+        this.upgrade_icon = this.add.image(285, 440, "blood_icon");
+        this.upgrade_text = this.add.text(300, 430, ": ", { fontSize: "24px", fill: "#fff" });
         this.blood_icon = this.add.image(800, 510, "blood_icon");
         this.health_icon = this.add.image(650, 510, "health_icon");
+        //creates the upgrade button
+        this.upgrade_button = new UpgradeButton(285, 500, "upgrade_icon", this);
+        this.upgrade_button.setScale(2, 2);
+        this.add.existing(this.upgrade_button);
         //create the pause button
         this.pause_button = new PausePlayButton(this, 50, 500); //as the pause button uses a spritesheet, it cant use the button class
         this.pause_button.setScale(2, 2);
@@ -113,6 +121,7 @@ class LevelClass extends Phaser.Scene {
     update() {
         this.altar.update();
         this.pause_button.update();
+        this.upgrade_button.update();
         this.tentacles.children.iterate(function (child) {
             child.update();
         });
@@ -194,7 +203,8 @@ class LevelClass extends Phaser.Scene {
             hit_box.setCircle(32 * 2);
             
             //summon in an set up the new tentacle
-            var tentacle = new TentacleClass(3000, this.temp_tentacle.x, this.temp_tentacle.y, this);
+            var attack_cooldown = 3000 - (this.tentacle_level * 100);
+            var tentacle = new TentacleClass(attack_cooldown, this.temp_tentacle.x, this.temp_tentacle.y, this);
             tentacle.setScale(2, 2);
             tentacle.width = 64;
             tentacle.height = 64;

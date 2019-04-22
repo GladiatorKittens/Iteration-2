@@ -25,7 +25,8 @@ class MonsterBaseClass extends Phaser.Physics.Arcade.Sprite {
 
 class TentacleClass extends MonsterBaseClass {
     constructor(cooldown_length, x, y, scene) {
-        super(cooldown_length, 1, x, y, "tentacle", scene);
+        var attack_power = scene.tentacle_level + 1; 
+        super(cooldown_length, attack_power, x, y, "tentacle", scene);
         this.range = 3;
         this.isStatic = true;
         this.is_attacking = false;
