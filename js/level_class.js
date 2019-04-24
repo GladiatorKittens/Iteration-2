@@ -1,6 +1,7 @@
 class LevelClass extends Phaser.Scene {
     constructor(id, blood) {
         super(id);
+        level_num++;
         this.id = id;
         this.x_array = [];
         this.y_array = [];
@@ -27,9 +28,9 @@ class LevelClass extends Phaser.Scene {
         this.load.image("troop_background", "assets/art/UI/troop_menu_background.png");
         this.load.image("blood_icon", "assets/art/UI/blood_icon.png");
         this.load.image("health_icon", "assets/art/UI/health_icon.png");
-        this.load.image("upgrade_icon", "assets/art/Buttons/button_upgrade.png")
+        this.load.image("upgrade_icon", "assets/art/Buttons/button_upgrade.png");
 
-        this.load.audio("tentacle_attackSFX", "assets/sound/Tentacle_Attack.wav")
+        this.load.audio("tentacle_attackSFX", "assets/sound/Tentacle_Attack.wav");
     }
     create(altar_health) {
         //load in anims and sound if level 1
@@ -137,8 +138,13 @@ class LevelClass extends Phaser.Scene {
             this.pause_button.play_state = pause_play_states.STOPPED;
             if (this.wave_no === this.no_of_waves - 1) {
                 //level complete! TODO - fix and add end screen
-                this.wave_text.setText("You Win!")     
+                if (game.config.sceneConfig[level_num + 1].name === "Pause") {
+                    this.wave_text.setText("You Win!")
+                } else {
+                    this.scene.Launch("Level_" + (level_num + 1));
+                }
             } else {
+                global_wave_num++;
                 this.wave_no++;
                 this.current_wave = this.wave_properties[this.wave_no];
                 this.wave_text.setText("Wave " + (this.wave_no + 1))

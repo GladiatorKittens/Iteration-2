@@ -28,7 +28,7 @@ class Pause extends Phaser.Scene {
     }
     create() {
         this.input.once('pointerdown', function () {
-            this.scene.resume('Level_1');
+            this.scene.resume("Level_" + level_num);
         }, this);
     }
     update() {

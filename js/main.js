@@ -19,7 +19,8 @@ var config = {
     //},
     scene: [StartScreen, Level_1, Pause] //add levels as necessary
 }
-
+var level_num = 0;
+var global_wave_num = 0;
 var game = new Phaser.Game(config);
 var music = {};
 function upgrade_cost_calc(x) {
@@ -37,6 +38,12 @@ function purchase_cost_calc(x) {
     //x is the troop number, y is the cost of the  troop
     //function is y = 9 x ^ (1/2)
     var y = Math.round(Math.sqrt(x) * 9);
+    return y;
+}
+function enemy_modified(x) {
+    //x is the current wave number, y determines how likely an enemy is to be stronger (1 in y)
+    //function is temporary for while the game only has a few levels.
+    var y = Math.abs(10 - ((1 / 2) * Math.pow(x, 2)));
     return y;
 }
 function snap_to_grid(x) {
