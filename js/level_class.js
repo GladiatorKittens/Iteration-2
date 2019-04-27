@@ -29,10 +29,12 @@ class LevelClass extends Phaser.Scene {
         this.load.image("blood_icon", "assets/art/UI/blood_icon.png");
         this.load.image("health_icon", "assets/art/UI/health_icon.png");
         this.load.image("upgrade_icon", "assets/art/Buttons/button_upgrade.png");
+        this.load.image("fullscreen_button", "assets/art/Buttons/fullscreen.png"); //TODO - update
 
         this.load.audio("tentacle_attackSFX", "assets/sound/Tentacle_Attack.wav");
     }
     create(altar_health) {
+        console.log(this)
         //load in anims and sound if level 1
         if (this.id == "Level_1") { create_anims.call(this); load_music.call(this); }
         //load in map values
@@ -43,6 +45,18 @@ class LevelClass extends Phaser.Scene {
         this.altar = new Altar(this, this.altar_x, this.altar_y, altar_health);
         this.add.existing(this.altar);
         this.altar.setScale(2, 2);
+        //fullscreen mode       
+        this.fullscreen_button = new Button(25, 25, "fullscreen_button", function () {
+            console.log("called")
+            if (this.scale.isFullscreen) {
+                //button.setFrame(0);
+                this.scale.stopFullscreen();
+            }
+            else {
+                //button.setFrame(1);
+                this.scale.startFullscreen();
+            }
+        }, this);
         //text placements
         this.tentacle_cost_icon = this.add.image(115, 440, "blood_icon");
         this.tentacle_cost_text = this.add.text(130, 430, ": ", { fontSize: "24px", fill: "#fff" });
@@ -137,11 +151,13 @@ class LevelClass extends Phaser.Scene {
             this.enemies_spawned = 0;
             this.pause_button.play_state = pause_play_states.STOPPED;
             if (this.wave_no === this.no_of_waves - 1) {
-                //level complete! TODO - fix and add end screen
+                //level complete!
                 if (game.config.sceneConfig[level_num + 1].name === "Pause") {
-                    this.wave_text.setText("You Win!")
+                    this.wave_text.setText("You Win!");
+                    this.scene.start("GameOver");
                 } else {
-                    this.scene.Launch("Level_" + (level_num + 1));
+                    this.scene.stop("Level_" + level_num);
+                    this.scene.start("Level_" + (level_num + 1));
                 }
             } else {
                 global_wave_num++;

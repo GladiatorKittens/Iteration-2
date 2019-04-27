@@ -16,7 +16,7 @@ class Altar extends Phaser.Physics.Arcade.Sprite {
         } else if (this.health >= this.max_health * 0.25) {
             this.setTexture("Altar", 3);
         } else {
-            this.setTexture("Altar", 4);
+            this.setTexture("Altar", 3);
         }
     }
     take_damage(damage) {
@@ -27,6 +27,7 @@ class Altar extends Phaser.Physics.Arcade.Sprite {
             this.setTexture(3);
             this.scene.input.enabled = false;
             this.scene.scene.pause();
+            this.scene.scene.start("GameOver")
         }
     }
 }

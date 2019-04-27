@@ -1,7 +1,7 @@
 var config = {
     type: Phaser.AUTO,
-    width: 960,
-    height: 544,
+    //width: 960,
+    //height: 544,
     pixelArt: true,
     backgroundColor: "#3C0344",
     physics: {
@@ -14,10 +14,13 @@ var config = {
             //debug: true
         }
     },
-        //scale: {
-    //    mode: Phaser.Scale.ScaleModes.RESIZE,
-    //},
-    scene: [StartScreen, Level_1, Pause] //add levels as necessary
+    scale: {
+        mode: Phaser.Scale.ScaleModes.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 960,
+        height: 544
+    },
+    scene: [StartScreen, Level_1, Pause, GameOver] //add levels as necessary
 }
 var level_num = 0;
 var global_wave_num = 0;
